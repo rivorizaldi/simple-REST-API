@@ -4,7 +4,6 @@
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 const Product = use("App/Models/Product");
-const Helpers = use("Helpers");
 /**
  * Resourceful controller for interacting with products
  */
@@ -19,11 +18,11 @@ class ProductController {
    * @param {View} ctx.view
    */
   async index({ request, response, view }) {
-	const products = await Product.all();
-	
+    const products = await Product.all();
+
     response.json({
       message: "success",
-      data: products,
+      data: products
     });
   }
 

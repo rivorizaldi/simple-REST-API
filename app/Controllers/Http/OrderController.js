@@ -45,15 +45,27 @@ class OrderController {
     const { price, qty, product_id } = request.post();
 
     const order = new Order();
-    order.price = price;
-    order.qty = qty;
-    order.product_id = product_id;
-    await order.save();
 
-    response.json({
-      message: "data added",
-      data: order
-    });
+    const filter = await Order.findBy("product_id", product_id);
+
+    if (filter) {
+      filter.merge({ qty: filter.qty + qty });
+      await filter.save();
+      response.json({
+        message: "data updated",
+        data: order
+      });
+    } else {
+      order.price = price;
+      order.qty = qty;
+      order.product_id = product_id;
+      await order.save();
+
+      response.json({
+        message: "data added",
+        data: order
+      });
+    }
   }
 
   /**
