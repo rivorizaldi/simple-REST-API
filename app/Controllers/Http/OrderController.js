@@ -19,13 +19,10 @@ class OrderController {
    * @param {View} ctx.view
    */
   async index({ request, response, view }) {
-    //const orders = await Order.all();
-
-    const orders = await Database.table("orders").innerJoin(
-      "products",
-      "orders.product_id",
-      "products.id"
-    );
+    // using eager loading
+    const orders = await Order.query()
+      .with("product")
+      .fetch();
 
     response.json({
       message: "success",
@@ -108,13 +105,14 @@ class OrderController {
    */
   async destroy({ params, request, response }) {
     const { id } = params;
-    const order = await Order.find(id);
 
-    await order.delete();
+    const orderId = await Order.find(id);
+
+    await orderId.delete();
 
     response.json({
       message: "deleted",
-      data: order
+      id: id
     });
   }
 }
