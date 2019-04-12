@@ -17,11 +17,15 @@
 const Route = use("Route");
 
 // products endpoint
-Route.get("v1/products", "ProductController.index");
-Route.get("v1/products/:id", "ProductController.show");
+Route.group(() => {
+  Route.get("products", "ProductController.index");
+  Route.get("products/:id", "ProductController.show");
+}).prefix("api/v1");
 
 //orders endpoint
-Route.get("v1/orders", "OrderController.index");
-Route.post("v1/orders", "OrderController.store");
-Route.patch("v1/orders/:id", "OrderController.update");
-Route.delete("v1/orders/:id", "OrderController.destroy");
+Route.group(() => {
+  Route.get("orders", "OrderController.index");
+  Route.post("orders", "OrderController.store");
+  Route.patch("orders/:id", "OrderController.update");
+  Route.delete("orders/:id", "OrderController.destroy");
+}).prefix("api/v1");
