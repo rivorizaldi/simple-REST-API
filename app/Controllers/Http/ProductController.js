@@ -18,12 +18,16 @@ class ProductController {
    * @param {View} ctx.view
    */
   async index({ request, response, view }) {
-    const products = await Product.all();
+    try {
+      const products = await Product.all();
 
-    response.json({
-      message: "success",
-      data: products
-    });
+      response.json({
+        message: "success",
+        data: products
+      });
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   /**
@@ -36,19 +40,21 @@ class ProductController {
    * @param {View} ctx.view
    */
   async show({ params: { id }, request, response, view }) {
-    const product = await Product.find(id);
+    try {
+      const product = await Product.find(id);
 
-    if (product) {
-      response.json({
-        message: "success",
-        data: product
-      });
-    } else {
-      response.json({
-        message: "failed",
-        id
-      });
-    }
+      if (product) {
+        response.json({
+          message: "success",
+          data: product
+        });
+      } else {
+        response.json({
+          message: "failed",
+          id
+        });
+      }
+    } catch (error) {}
   }
 }
 

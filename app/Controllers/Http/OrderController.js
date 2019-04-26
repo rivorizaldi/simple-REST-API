@@ -4,7 +4,6 @@
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 const Order = use("App/Models/Order");
-const Database = use("Database");
 /**
  * Resourceful controller for interacting with orders
  */
@@ -19,15 +18,19 @@ class OrderController {
    * @param {View} ctx.view
    */
   async index({ request, response, view }) {
-    // using eager loading
-    const orders = await Order.query()
-      .with("product")
-      .fetch();
+    try {
+      // using eager loading
+      const orders = await Order.query()
+        .with("product")
+        .fetch();
 
-    response.json({
-      message: "success",
-      data: orders
-    });
+      response.json({
+        message: "success",
+        data: orders
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   /**
@@ -39,29 +42,33 @@ class OrderController {
    * @param {Response} ctx.response
    */
   async store({ request, response }) {
-    const { price, qty, product_id } = request.post();
+    try {
+      const { price, qty, product_id } = request.post();
 
-    const order = new Order();
+      const order = new Order();
 
-    const filter = await Order.findBy("product_id", product_id);
+      const filter = await Order.findBy("product_id", product_id);
 
-    if (filter) {
-      filter.merge({ qty: filter.qty + qty });
-      await filter.save();
-      response.json({
-        message: "data updated",
-        data: order
-      });
-    } else {
-      order.price = price;
-      order.qty = qty;
-      order.product_id = product_id;
-      await order.save();
+      if (filter) {
+        filter.merge({ qty: filter.qty + qty });
+        await filter.save();
+        response.json({
+          message: "data updated",
+          data: order
+        });
+      } else {
+        order.price = price;
+        order.qty = qty;
+        order.product_id = product_id;
+        await order.save();
 
-      response.json({
-        message: "data added",
-        data: order
-      });
+        response.json({
+          message: "data added",
+          data: order
+        });
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -74,24 +81,28 @@ class OrderController {
    * @param {Response} ctx.response
    */
   async update({ params, request, response }) {
-    const { id } = params;
-    const order = await Order.find(id);
+    try {
+      const { id } = params;
+      const order = await Order.find(id);
 
-    if (order) {
-      const { qty } = request.post();
-      order.qty = qty;
+      if (order) {
+        const { qty } = request.post();
+        order.qty = qty;
 
-      await order.save();
+        await order.save();
 
-      response.json({
-        message: "data updated",
-        data: order
-      });
-    } else {
-      response.json({
-        message: "data failed to updated",
-        data: id
-      });
+        response.json({
+          message: "data updated",
+          data: order
+        });
+      } else {
+        response.json({
+          message: "data failed to updated",
+          data: id
+        });
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -104,16 +115,18 @@ class OrderController {
    * @param {Response} ctx.response
    */
   async destroy({ params, request, response }) {
-    const { id } = params;
+    try {
+      const { id } = params;
 
-    const orderId = await Order.find(id);
+      const orderId = await Order.find(id);
 
-    await orderId.delete();
+      await orderId.delete();
 
-    response.json({
-      message: "deleted",
-      id: id
-    });
+      response.json({
+        message: "deleted",
+        id: id
+      });
+    } catch (error) {}
   }
 }
 

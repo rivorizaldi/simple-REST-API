@@ -29,3 +29,9 @@ Route.group(() => {
   Route.patch("orders/:id", "OrderController.update");
   Route.delete("orders/:id", "OrderController.destroy");
 }).prefix("api/v1");
+
+//Auth endpoint
+Route.post("api/v1/user/register", "AuthController.register");
+Route.post("api/v1/user/login", "AuthController.login");
+
+Route.get("api/v1/user/:id", "AuthController.getUser").middleware("auth");
